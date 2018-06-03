@@ -1,11 +1,7 @@
-function Key(position, keyType) {
-    this.position = position;
-    this.keyType = keyType;
-}
-
-function KinesisKeyboardConfig(includes) {
+function KinesisKeyboardConfig(includes, layer) {
     this.includes = ["kinesis.h"].concat(includes);
     this.keys = [];
+    this.layers = layer;
 
     this.addKey = function (key) {
         if(typeof Key) {
@@ -19,6 +15,17 @@ function KinesisKeyboardConfig(includes) {
 
         for (include in this.includes) {
             result += '#include "' + this.includes[include] + '"\n';
+        }
+
+        if(this.layers != undefined ) {
+            result += "const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {\n";
+            result += "[JOAN] = keymap(";
+            var key;
+            for(key in this.layers.keys) {
+                result += this.layers.keys[key];
+            }
+            result += ")";
+            result += "}";
         }
         return result;
     };
