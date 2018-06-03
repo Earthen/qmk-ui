@@ -14,7 +14,13 @@ function KinesisKeyboardConfig(includes) {
     };
 
     this.print = function () {
-        return "#include \"kinesis.h\"\n#include \"action_layer.h\"\n";
+        var result = "";
+        var include;
+
+        for (include in this.includes) {
+            result += '#include "' + this.includes[include] + '"\n';
+        }
+        return result;
     };
 }
 
