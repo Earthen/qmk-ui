@@ -10,18 +10,16 @@ function KinesisKeyboardConfig(includes, layer) {
         }
     };
 
-    this.addLayer = function() {
+    this.addLayer = function(layer) {
         var result = "";
-        result += this.layerHeader;
-        result += this.addKeymap();
-        result += this.closeLayerHeader();
+        result += this.addKeymap(layer);
         return result;
     };
 
-    this.addKeymap = function() {
+    this.addKeymap = function(layer) {
         var result = "";
-        result += "[" + this.layers.name + "] = keymap(";
-        result += this.addLayerKeys(result);
+        result += "[" + layer.name + "] = keymap(";
+        result += this.addLayerKeys(layer);
         result += ")";
         return result;
     };
@@ -30,15 +28,15 @@ function KinesisKeyboardConfig(includes, layer) {
         return key > 0;
     };
 
-    this.addLayerKeys = function() {
+    this.addLayerKeys = function(layer) {
         var result = "";
         var key;
-        for(key in this.layers.keys) {
+        for(key in layer.keys) {
             if(notFirst(key)) {
                 result += ', ';
             }
 
-            result += this.layers.keys[key];
+            result += layer.keys[key];
         }
         return result;
     };
@@ -49,16 +47,24 @@ function KinesisKeyboardConfig(includes, layer) {
 
     this.print = function () {
         var result = "";
-        var include;
 
+        var include;
         for (include in this.includes) {
             result += '#include "' + this.includes[include] + '"\n';
         }
 
+        result += this.layerHeader;
         if(this.layers != undefined ) {
-            result += this.addLayer();
-            console.log(result);
+
+            for (layer in this.layers) {
+                if(notFirst(layer)) {
+                    result += ',\n' ;
+                }
+                result += this.addLayer(this.layers[layer]);
+            }
         }
+        result += this.closeLayerHeader();
+
         return result;
     };
 }
